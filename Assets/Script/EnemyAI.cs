@@ -29,6 +29,17 @@ public class EnemyAI : MonoBehaviour
 
     void Update()
     {
+        // Nếu Thua HOẶC Thắng -> Enemy đều phải dừng lại
+        if (GameManager.Instance.isGameOver || GameManager.Instance.isVictory)
+        {
+            if (agent.enabled)
+            {
+                agent.isStopped = true;
+                agent.velocity = Vector3.zero; // Đứng im
+            }
+            return;
+        }
+
         if (target == null) return;
 
         // 1. Nếu đang bận phá cửa thì ĐỪNG làm gì cả (Đứng im)
@@ -45,6 +56,8 @@ public class EnemyAI : MonoBehaviour
 
         // 4. Quét vật cản
         CheckObstacle();
+
+       
     }
 
     void OnDrawGizmosSelected()
@@ -113,12 +126,6 @@ public class EnemyAI : MonoBehaviour
     void AttackMom()
     {
         Debug.Log("BAD ENDING!");
-        ResetLoop();
-    }
-
-    void ResetLoop()
-    {
-        string currentSceneName = SceneManager.GetActiveScene().name;
-        SceneManager.LoadScene(currentSceneName);
+        GameManager.Instance.GameOver();
     }
 }
