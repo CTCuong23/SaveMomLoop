@@ -10,8 +10,10 @@ public class Sofa : Interactable // Kế thừa luôn!
     [SerializeField] Vector3 blockPosition;   // Vị trí chặn cửa
     [SerializeField] Vector3 originalPosition; // Vị trí ban đầu
 
-    void Start()
+    protected override void Start()
     {
+        base.Start(); // <-- THÊM DÒNG NÀY ĐỂ LẤY RENDERER TỪ CHA
+
         obstacle = GetComponent<NavMeshObstacle>();
         originalPosition = transform.position; // Lưu vị trí gốc
 
@@ -43,12 +45,16 @@ public class Sofa : Interactable // Kế thừa luôn!
 
     public override void Break()
     {
+        // Gọi hàm cha để đổi màu
+        base.Break();
+
         Debug.Log("Sofa bị chém nát!");
 
-        // Khi ghế bị phá -> Tắt chặn đường
-        GetComponent<NavMeshObstacle>().enabled = false;
+        // Tắt chặn đường để Enemy đi xuyên qua xác cái ghế
+        if (obstacle != null) obstacle.enabled = false;
 
-        // Làm cho cái ghế bay màu luôn (hoặc đổi sang model cái ghế gãy)
-        gameObject.SetActive(false);
+        // Tắt Collider nếu có
+        Collider col = GetComponent<Collider>();
+        if (col != null) col.enabled = false;
     }
 }
